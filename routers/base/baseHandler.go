@@ -74,6 +74,7 @@ func Login(c *gin.Context) {
 
 		//类型断言
 		userId, ok := res["userInfo"].(menuInfo.User)
+
 		if ok {
 			fmt.Println(userId.ID)
 			// tokenString, _ := middleWare.GenToken(user.Username, reflect.ValueOf(res["userInfo"]).FieldByName("ID").Int())
@@ -95,6 +96,11 @@ func Login(c *gin.Context) {
 
 		return
 	}
+	log.Println("用户名或密码错误")
+	c.JSON(http.StatusOK, gin.H{
+		"code":    2002,
+		"message": "用户名或密码错误",
+	})
 }
 
 func HomeMenuHandler(c *gin.Context) {

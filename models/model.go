@@ -11,7 +11,7 @@ import (
 
 // 数据库连接
 // 定义数据地址
-var Dsn string = "root:qiudaoyu@tcp(127.0.0.1:3306)/qiudaoyu?charset=utf8mb4&parseTime=True&loc=Local"
+var Dsn string = "root:qiudaoyu@tcp(127.0.0.1:3306)/smqiudaoyu?charset=utf8mb4&parseTime=True&loc=Local"
 var Conn *gorm.DB = nil
 
 func InitDb() {

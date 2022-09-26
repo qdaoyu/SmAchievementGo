@@ -26,7 +26,7 @@ func main() {
 	// router.Use(middleWare.CORSMiddleware())
 	// router.Use(middleWare.StatCost())
 
-	if err := router.Run(":8082"); err != nil {
+	if err := router.Run(":8083"); err != nil {
 		fmt.Printf("startup service failed, err:%v\n", err)
 	}
 }

@@ -4,14 +4,10 @@ import (
 	"errors"
 	"fmt"
 	"reflect"
-	"time"
 
 	"qiudaoyu/models"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 )
 
 // 用户信息
@@ -39,44 +35,12 @@ type AdminInfo struct {
 	Namezh   string
 }
 
-// 定义数据地址
-var Dsn string = "root:qiudaoyu@tcp(127.0.0.1:3306)/qiudaoyu?charset=utf8mb4&parseTime=True&loc=Local"
-
-func DbCommonOperation(dsn string) (*gorm.DB, error) {
-	//连接数据库
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true,
-		},
-	})
-	if err != nil {
-		panic("failed to connect database")
-	}
-	sqlDB, _ := db.DB()
-
-	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
-	sqlDB.SetMaxIdleConns(10)
-
-	// SetMaxOpenConns 设置打开数据库连接的最大数量。
-	sqlDB.SetMaxOpenConns(100)
-
-	// SetConnMaxLifetime 设置了连接可复用的最大时间。
-	sqlDB.SetConnMaxLifetime(10 * time.Second)
-
-	return db, err
-}
-
 func LoginConfirm(userName string, passWord string) (gin.H, error) {
 
 	//连接数据库
 	var user User
-	db, err := DbCommonOperation(Dsn)
-	if err != nil {
-		panic("failed to connect database")
-	}
-
 	// AND
-	db.Table("t_admin").Where("username = ? AND password = ?", userName, passWord).Find(&user)
+	models.Conn.Table("t_admin").Where("username = ? AND password = ?", userName, passWord).Find(&user)
 	if !reflect.DeepEqual(user, User{}) {
 		return gin.H{"userInfo": user}, nil
 	} else {

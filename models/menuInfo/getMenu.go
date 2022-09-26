@@ -2,12 +2,9 @@ package menuInfo
 
 import (
 	"errors"
-	"time"
+	"qiudaoyu/models"
 
 	"github.com/gin-gonic/gin"
-	"gorm.io/driver/mysql"
-	"gorm.io/gorm"
-	"gorm.io/gorm/schema"
 )
 
 // 结构体
@@ -27,27 +24,6 @@ type T_menu struct {
 }
 
 func GetMenuDb(userID int) (gin.H, error) {
-	dsn := "root:qiudaoyu@tcp(127.0.0.1:3306)/qiudaoyu?charset=utf8mb4&parseTime=True&loc=Local"
-	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
-		NamingStrategy: schema.NamingStrategy{
-			SingularTable: true,
-		},
-	})
-	if err != nil {
-		panic("failed to connect database")
-	}
-
-	sqlDB, _ := db.DB()
-
-	// SetMaxIdleConns 设置空闲连接池中连接的最大数量
-	sqlDB.SetMaxIdleConns(10)
-
-	// SetMaxOpenConns 设置打开数据库连接的最大数量。
-	sqlDB.SetMaxOpenConns(100)
-
-	// SetConnMaxLifetime 设置了连接可复用的最大时间。
-	sqlDB.SetConnMaxLifetime(10 * time.Second)
-
 	var menu []T_menu
 	// p_dataList := &dataList
 	// db.Model(&dataList).Limit(-1).Offset(-1).Find(&dataList)
@@ -56,7 +32,7 @@ func GetMenuDb(userID int) (gin.H, error) {
 		"SELECT t_menu.* FROM t_admin,t_role,t_menu_role,t_menu    where   t_admin.roleid = t_role.id and " +
 		" t_role.id = t_menu_role.rid and t_menu_role.mid = t_menu.id   and  t_admin.id = ?"
 
-	db.Raw(sqlString, "Home", userID).Scan(&menu)
+	models.Conn.Raw(sqlString, "Home", userID).Scan(&menu)
 	//查询数据库  返回总数  limit 跟offset 参数如果是-1，就是无限制
 	if len(menu) == 0 {
 		return gin.H{"message": "菜单获取失败"}, errors.New("菜单获取失败")
