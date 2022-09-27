@@ -194,7 +194,53 @@ func AddSyAchieveInfoHandler(c *gin.Context) {
 }
 
 // 获取塑颜业绩表信息(管理员_id1和测试角色_id2默认可以返回所有数据)
-func GetSyAchieveInfoHandler(c *gin.Context) {
+// func GetSyAchieveInfoHandler(c *gin.Context) {
+// 	var syMap = make(map[string]interface{})
+// 	currentPage, err := strconv.Atoi(c.Query("currentPage"))
+// 	if err != nil {
+// 		log.Println(err)
+// 		return
+// 	}
+// 	size, err := strconv.Atoi(c.Query("size"))
+// 	if err != nil {
+// 		log.Println(err)
+// 		return
+// 	}
+// 	userID, _ := strconv.Atoi(c.Request.Header.Get("userID"))
+// 	//类型断言
+// 	userName, _ := c.Get("username")
+// 	userNameAssert, ok := userName.(string)
+// 	// log.Println("测试:", userID, userName)
+// 	// userName, _ := c.Get("username")
+// 	if !ok {
+// 		c.JSON(200, gin.H{
+// 			"code":    5003,
+// 			"message": "用户名断言失败",
+// 			"data":    nil,
+// 		})
+// 		return
+// 	}
+// 	syMap, err = achieve.GetSyAchieve(userID, userNameAssert, currentPage, size)
+// 	if err != nil {
+// 		c.JSON(200, gin.H{
+// 			"code":    5002,
+// 			"message": syMap["message"],
+// 			"data":    nil,
+// 		})
+// 		return
+// 	} else {
+// 		c.JSON(http.StatusOK, gin.H{
+// 			"code":    200,
+// 			"message": syMap["message"],
+// 			"data":    syMap["data"],
+// 			"total":   syMap["total"],
+// 		})
+// 		return
+// 	}
+// }
+
+// 获取塑颜业绩表信息(管理员_id1和测试角色_id2默认可以返回所有数据)
+func GetSmCustomerListHandler(c *gin.Context) {
 	var syMap = make(map[string]interface{})
 	currentPage, err := strconv.Atoi(c.Query("currentPage"))
 	if err != nil {
@@ -238,6 +284,7 @@ func GetSyAchieveInfoHandler(c *gin.Context) {
 		return
 	}
 }
+
 func CalDupName(c *gin.Context) {
 	// 注意：下面为了举例子方便，暂时忽略了错误处理
 	b, err := c.GetRawData() // 从c.Request.Body读取请求数据

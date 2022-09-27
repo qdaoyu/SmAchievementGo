@@ -18,9 +18,11 @@ func LoadBase(e *gin.Engine) {
 
 	e.GET("/admin/basic/info", GetUserBasicInfoHandler)
 
-	e.POST("/achieve/sy/info/add", AddSyAchieveInfoHandler)
+	// e.POST("/achieve/sy/info/add", AddSyAchieveInfoHandler)
 
-	e.GET("/achieve/sy/info/get", GetSyAchieveInfoHandler)
+	// e.GET("/achieve/sy/info/get", GetSyAchieveInfoHandler)
+	//尚美会员列表
+	e.GET("/customer/list", GetSmCustomerListHandler)
 	// e.POST("/auth", AuthHandler)
 
 	// e.NoRoute(Page404)
