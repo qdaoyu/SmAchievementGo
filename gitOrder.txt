@@ -5,3 +5,5 @@ git commit -m "备注内容"
 git push https://github.com/qdaoyu/SmAchievementGo.git master
 
 git pull https://github.com/qdaoyu/SmAchievementGo.git master
+
+git push https://github.com/qdaoyu/SmAchievementGo.git master --force

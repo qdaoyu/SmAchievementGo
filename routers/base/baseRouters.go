@@ -21,7 +21,7 @@ func LoadBase(e *gin.Engine) {
 	// e.POST("/achieve/sy/info/add", AddSyAchieveInfoHandler)
 	// AddSyAchieveInfoHandler
 	// e.GET("/achieve/sy/info/get", GetSyAchieveInfoHandler)
-	//尚美会员列表
+	//获取尚美会员列表
 	e.GET("/customer/list", GetSmCustomerListHandler)
 	// e.POST("/auth", AuthHandler)
 	//获取门店信息

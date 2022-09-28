@@ -100,14 +100,6 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 			// fmt.Println("mc", mc.Username)
 			// fmt.Println("mc", mc.Userid)
 			//判断userid是否有误
-			if mc.Userid != int64(uid) {
-				c.JSON(http.StatusOK, gin.H{
-					"code":    2006,
-					"message": "userid错误,与token存储信息匹配失败",
-				})
-				c.Abort()
-				return
-			}
 
 			if err != nil {
 				c.JSON(http.StatusOK, gin.H{
@@ -117,6 +109,15 @@ func JWTAuthMiddleware() func(c *gin.Context) {
 				c.Abort()
 				return
 			}
+			if mc.Userid != int64(uid) {
+				c.JSON(http.StatusOK, gin.H{
+					"code":    2006,
+					"message": "userid错误,与token存储信息匹配失败",
+				})
+				c.Abort()
+				return
+			}
+
 			// 将当前请求的username信息保存到请求的上下文c上
 			c.Set("username", mc.Username)
 			log.Println(c.Get("username"))

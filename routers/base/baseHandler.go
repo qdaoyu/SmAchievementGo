@@ -12,6 +12,7 @@ import (
 	"qiudaoyu/models/customer"
 	"qiudaoyu/models/menuInfo"
 	"strconv"
+	"strings"
 
 	"github.com/gin-gonic/gin"
 )
@@ -250,24 +251,38 @@ func AddSyAchieveInfoHandler(c *gin.Context) {
 
 // 添加尚美会员信息 `form:"username" json:"username" binding:"required"`
 func AddSmCustomerHandler(c *gin.Context) {
+	var errMsg string
 	var customertb customer.Customertb
+	log.Println("log:", c.Query("customerid"))
 	err := c.ShouldBind(&customertb)
 	log.Println("addCustomer:", customertb)
+	log.Println(err)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    2001,
-			"message": "会员信息绑定失败",
+			"message": "会员信息新增失败,请联系系统管理员(江昌杰)" + err.Error(),
 		})
 		return
 	}
 
 	err = customer.AddSmCustomer(customertb)
 	if err != nil {
+		ok := strings.Contains(err.Error(), "PRIMARY")
+		if ok {
+			errMsg = "添加失败,此会员已注册！"
+		} else {
+			errMsg = "新增会员失败:" + err.Error()
+		}
 		c.JSON(http.StatusOK, gin.H{
 			"code":    2002,
-			"message": "新增会员失败:" + err.Error(),
+			"message": errMsg,
 		})
 		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "新增会员成功",
+		})
 	}
 }
 
