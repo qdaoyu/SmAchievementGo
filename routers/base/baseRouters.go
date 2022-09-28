@@ -35,5 +35,9 @@ func LoadBase(e *gin.Engine) {
 	e.GET("/basic/consumetype", GetConsumetypeHandler)
 	//添加会员信息
 	e.POST("/customer/add", AddSmCustomerHandler)
+	//删除会员信息
+	e.DELETE("/customer/delete/:id", DeleteSmCustomerHandler)
+	//更新会员信息
+	e.PUT("/customer/update", UpdateSmCustomerHandler)
 
 }

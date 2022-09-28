@@ -4,22 +4,21 @@ import (
 	"log"
 	"qiudaoyu/models"
 	"qiudaoyu/models/menuInfo"
-	"time"
 )
 
 type Customer struct {
-	Customerid   string
-	Name         string
-	Gender       string
-	Consumetype  string
-	Visittime    time.Time
+	Customerid string
+	Name       string
+	Gender     string
+	// Consumetype  string
+	Visittime    string
 	Phone        string
 	Shop         string
 	Consultteach string
-	Item         string
-	Treatnum     int
-	Operanum     int
-	Unoperanum   int
+	// Item         string
+	Treatnum   int
+	Operanum   int
+	Unoperanum int
 }
 
 // 获取尚美会员信息表
@@ -45,13 +44,13 @@ func GetSmCustomerList(uid int, username string, currentPage int, size int) (map
 	if rid == 1 || rid == 2 {
 		// sqlString := `select t_customer.*,t_orderlist.treatnum,t_orderlist.operanum,t_orderlist.unoperanum
 		// from t_customer left join t_orderlist on t_customer.customerid = t_orderlist.customerid `
-		sqlString := `select t_customer.*,
-		t_orderlist.treatnum,t_orderlist.operanum ,t_orderlist.unoperanum 
-		from t_customer left join t_orderlist on t_customer.customerid = t_orderlist.customerid limit ? offset  ? `
-		// sqlString := `select t_customer.customerid as customerid,t_customer.name as name,t_customer.gender as gender,
-		// t_customer.phone as phone,t_customer.shop as shop,t_customer.consultteach as consultteach,t_customer.item as item,t_customer.visittime as visittime,
-		// t_orderlist.treatnum as treatnum,t_orderlist.operanum as operanum,t_orderlist.unoperanum  as unoperanum
+		// sqlString := `select t_customer.*,
+		// t_orderlist.treatnum,t_orderlist.operanum ,t_orderlist.unoperanum
 		// from t_customer left join t_orderlist on t_customer.customerid = t_orderlist.customerid limit ? offset  ? `
+		sqlString := `select t_customer.customerid ,t_customer.name ,t_customer.gender ,
+		t_customer.phone ,t_customer.shop,t_customer.consultteach , date_format(t_customer.visittime,"%Y-%m-%d") as visittime,
+		t_orderlist.treatnum ,t_orderlist.operanum ,t_orderlist.unoperanum  
+		from t_customer left join t_orderlist on t_customer.customerid = t_orderlist.customerid limit ? offset  ? `
 
 		sqlStringTotal := `select count(*) from t_customer`
 
@@ -80,7 +79,9 @@ func GetSmCustomerList(uid int, username string, currentPage int, size int) (map
 		}
 	} else {
 		//limit offset
-		sqlString := `select t_customer.*,t_orderlist.treatnum,t_orderlist.operanum ,t_orderlist.unoperanum 
+		sqlString := `select t_customer.customerid ,t_customer.name ,t_customer.gender ,
+		t_customer.phone ,t_customer.shop,t_customer.consultteach , date_format(t_customer.visittime,"%Y-%m-%d") as visittime ,
+		t_orderlist.treatnum,t_orderlist.operanum ,t_orderlist.unoperanum 
 		from t_customer left join t_orderlist on t_customer.customerid = t_orderlist.customerid where t_customer.consultteach = ? limit ? offset  ? `
 
 		sqlStringTotal := `select count(*) from t_customer where t_customer.consultteach = ? `

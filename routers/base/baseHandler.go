@@ -249,7 +249,64 @@ func AddSyAchieveInfoHandler(c *gin.Context) {
 // 	}
 // }
 
-// 添加尚美会员信息 `form:"username" json:"username" binding:"required"`
+// 更新尚美会员信息
+func UpdateSmCustomerHandler(c *gin.Context) {
+	var customertb customer.Customertb
+	// log.Println("log:", c.Query("customerid"))
+	err := c.ShouldBind(&customertb)
+	log.Println("addCustomer:", customertb)
+	log.Println(err)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    2001,
+			"message": "会员信息更新失败,请联系系统管理员(江昌杰)" + err.Error(),
+		})
+		return
+	}
+
+	err = customer.UpdateSmCustomer(customertb)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    2002,
+			"message": "会员信息更新失败,请联系系统管理员(江昌杰)" + err.Error(),
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "会员信息更新成功",
+		})
+	}
+}
+
+// 删除尚美会员信息 deleteSmCustomerHandler
+func DeleteSmCustomerHandler(c *gin.Context) {
+	phone := c.Param("id")
+	log.Println("log:", phone)
+	if len(phone) == 0 {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    2003,
+			"message": "删除失败，无删除参数",
+		})
+		return
+	}
+
+	err := customer.DeleteSmCustomer(phone)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    2002,
+			"message": "删除失败:" + err.Error(),
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": "删除成功",
+		})
+	}
+}
+
+// 添加尚美会员信息
 func AddSmCustomerHandler(c *gin.Context) {
 	var errMsg string
 	var customertb customer.Customertb
