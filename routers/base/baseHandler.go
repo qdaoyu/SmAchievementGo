@@ -8,6 +8,8 @@ import (
 	"os/exec"
 	"qiudaoyu/middleWare"
 	"qiudaoyu/models/achieve"
+	"qiudaoyu/models/basic"
+	"qiudaoyu/models/customer"
 	"qiudaoyu/models/menuInfo"
 	"strconv"
 
@@ -28,6 +30,7 @@ type UserInfo struct {
 	Password string `form:"password" json:"password" binding:"required"`
 }
 
+// 上传业绩表
 func UploadSyAchieveTb(c *gin.Context) {
 	file, err := c.FormFile("file")
 	if err != nil {
@@ -43,6 +46,7 @@ func UploadSyAchieveTb(c *gin.Context) {
 	}
 }
 
+// 登录验证
 func Login(c *gin.Context) {
 	// username := c.PostForm("username")
 	// password := c.PostForm("password")
@@ -103,6 +107,7 @@ func Login(c *gin.Context) {
 	})
 }
 
+// 获取菜单信息
 func HomeMenuHandler(c *gin.Context) {
 	// username := c.PostForm("username")
 	// password := c.PostForm("password")
@@ -134,6 +139,7 @@ func HomeMenuHandler(c *gin.Context) {
 	}
 }
 
+// 获取用户信息
 func GetUserInfoHandler(c *gin.Context) {
 	//获取menu菜单
 	res, err := menuInfo.GetUserInfo(c)
@@ -154,6 +160,7 @@ func GetUserInfoHandler(c *gin.Context) {
 	}
 }
 
+// 用户资料信息
 func GetUserBasicInfoHandler(c *gin.Context) {
 	//获取menu菜单
 	userID, _ := strconv.Atoi(c.Request.Header.Get("userID"))
@@ -174,6 +181,8 @@ func GetUserBasicInfoHandler(c *gin.Context) {
 		return
 	}
 }
+
+// 塑颜业绩新增（导入）
 func AddSyAchieveInfoHandler(c *gin.Context) {
 
 	// userID, _ := strconv.Atoi(c.Request.Header.Get("userID"))
@@ -239,9 +248,121 @@ func AddSyAchieveInfoHandler(c *gin.Context) {
 // 	}
 // }
 
-// 获取塑颜业绩表信息(管理员_id1和测试角色_id2默认可以返回所有数据)
+// 添加尚美会员信息 `form:"username" json:"username" binding:"required"`
+func AddSmCustomerHandler(c *gin.Context) {
+	var customertb customer.Customertb
+	err := c.ShouldBind(&customertb)
+	log.Println("addCustomer:", customertb)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    2001,
+			"message": "会员信息绑定失败",
+		})
+		return
+	}
+
+	err = customer.AddSmCustomer(customertb)
+	if err != nil {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    2002,
+			"message": "新增会员失败:" + err.Error(),
+		})
+		return
+	}
+}
+
+// 获取项目信息
+func GetItemHandler(c *gin.Context) {
+	// var smMap = make(map[string]interface{})
+	resMap, err := basic.GetSmItem()
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code":    5002,
+			"message": resMap["message"],
+			"data":    nil,
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": resMap["message"],
+			"data":    resMap["data"],
+			"total":   resMap["total"],
+		})
+		return
+	}
+}
+
+// GetConsumetypeHandler
+// 获取消费类型信息
+func GetConsumetypeHandler(c *gin.Context) {
+	// var smMap = make(map[string]interface{})
+	resMap, err := basic.GetSmConsumetype()
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code":    5002,
+			"message": resMap["message"],
+			"data":    nil,
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": resMap["message"],
+			"data":    resMap["data"],
+			"total":   resMap["total"],
+		})
+		return
+	}
+}
+
+// 获取咨询师信息
+func GetConsultteachHandler(c *gin.Context) {
+	// var smMap = make(map[string]interface{})
+	resMap, err := basic.GetSmConsultteach()
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code":    5002,
+			"message": resMap["message"],
+			"data":    nil,
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": resMap["message"],
+			"data":    resMap["data"],
+			"total":   resMap["total"],
+		})
+		return
+	}
+}
+
+// 获取门店信息
+func GetShopHandler(c *gin.Context) {
+	// var smMap = make(map[string]interface{})
+	resMap, err := basic.GetSmShop()
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code":    5002,
+			"message": resMap["message"],
+			"data":    nil,
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": resMap["message"],
+			"data":    resMap["data"],
+			"total":   resMap["total"],
+		})
+		return
+	}
+}
+
+// 获取尚美会员信息列表(管理员_id1和测试角色_id2默认可以返回所有数据)
 func GetSmCustomerListHandler(c *gin.Context) {
-	var syMap = make(map[string]interface{})
+	var smMap = make(map[string]interface{})
 	currentPage, err := strconv.Atoi(c.Query("currentPage"))
 	if err != nil {
 		log.Println(err)
@@ -266,25 +387,26 @@ func GetSmCustomerListHandler(c *gin.Context) {
 		})
 		return
 	}
-	syMap, err = achieve.GetSyAchieve(userID, userNameAssert, currentPage, size)
+	smMap, err = customer.GetSmCustomerList(userID, userNameAssert, currentPage, size)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"code":    5002,
-			"message": syMap["message"],
+			"message": smMap["message"],
 			"data":    nil,
 		})
 		return
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,
-			"message": syMap["message"],
-			"data":    syMap["data"],
-			"total":   syMap["total"],
+			"message": smMap["message"],
+			"data":    smMap["data"],
+			"total":   smMap["total"],
 		})
 		return
 	}
 }
 
+// 重名计算
 func CalDupName(c *gin.Context) {
 	// 注意：下面为了举例子方便，暂时忽略了错误处理
 	b, err := c.GetRawData() // 从c.Request.Body读取请求数据
