@@ -45,10 +45,9 @@ func UpdateSmCustomer(customer Customertb) error {
 
 // 删除会员信息
 func DeleteSmCustomer(phone string) error {
-
-	// sqlString := `DELETE from t_customer where phone = `
-	// err := models.Conn.Raw(sqlString, phone).Error
-	err := models.Conn.Table("t_customer").Where("phone= ? ", phone).Delete(&Customertb{}).Error
+	sqlString := `DELETE from t_customer where phone = ?`
+	err := models.Conn.Exec(sqlString, phone).Error
+	// err := models.Conn.Table("t_customer").Where("phone= ? ", phone).Delete(&Customertb{}).Error
 	log.Println(phone)
 	if err != nil {
 		log.Println(err)
