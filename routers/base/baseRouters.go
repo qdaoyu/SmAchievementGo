@@ -39,5 +39,7 @@ func LoadBase(e *gin.Engine) {
 	e.DELETE("/customer/delete/:id", DeleteSmCustomerHandler)
 	//更新会员信息
 	e.PUT("/customer/update", UpdateSmCustomerHandler)
+	//下载会员信息
+	e.GET("/customer/export", ExportSmCustomerHandler)
 
 }

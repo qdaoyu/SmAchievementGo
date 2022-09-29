@@ -249,6 +249,56 @@ func AddSyAchieveInfoHandler(c *gin.Context) {
 // 	}
 // }
 
+// 导出尚美会员信息
+func ExportSmCustomerHandler(c *gin.Context) {
+	log.Println("进入")
+	userID, _ := strconv.Atoi(c.Request.Header.Get("userID"))
+	//类型断言
+	userName, _ := c.Get("username")
+	userNameAssert, ok := userName.(string)
+	log.Println(userNameAssert)
+	// log.Println("测试:", userID, userName)
+	// userName, _ := c.Get("username")
+	if !ok {
+		c.JSON(200, gin.H{
+			"code":    5003,
+			"message": "用户名断言失败",
+			"data":    nil,
+		})
+		return
+	}
+
+	//返回文件地址
+	filePath, err := customer.ExportSmCustomerList(userID, userNameAssert)
+	log.Println(filePath)
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code":    5002,
+			"message": "下载失败:" + err.Error(),
+			"data":    nil,
+		})
+		return
+	} else {
+
+		c.Header("Content-Type", "application/octet-stream")
+		c.Header("Content-Disposition", "attachment; filename="+userNameAssert+"customerInfo.xlsx") // 用来指定下载下来的文件名
+		c.Header("Content-Transfer-Encoding", "binary")
+
+		// fileData, err := ioutil.ReadFile(filePath)
+		if err != nil {
+			c.JSON(200, gin.H{
+				"code":    5002,
+				"message": "下载失败:" + err.Error(),
+				"data":    nil,
+			})
+			return
+		}
+		c.File(filePath)
+		// c.Data(200, "application/octet-stream", fileData)
+		return
+	}
+}
+
 // 更新尚美会员信息
 func UpdateSmCustomerHandler(c *gin.Context) {
 	var customertb customer.Customertb
