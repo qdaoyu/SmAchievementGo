@@ -500,9 +500,11 @@ func GetSmCustomerListHandler(c *gin.Context) {
 	shop := c.Query("shop")
 	consultteach := c.Query("consultteach")
 	name := c.Query("name")
+	phone := c.Query("phone")
 	cust.Shop = shop
 	cust.Consultteach = consultteach
 	cust.Name = name
+	cust.Phone = phone
 	log.Println(cust)
 	userID, _ := strconv.Atoi(c.Request.Header.Get("userID"))
 	//类型断言
