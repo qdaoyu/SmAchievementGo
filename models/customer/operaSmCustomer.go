@@ -87,8 +87,6 @@ func ExportSmCustomerList(uid int, username string) (string, error) {
 
 		// err := models.Conn.Raw(sqlString).Count(&total).Limit(size).Offset(offsetVal).Scan(&customer).Error
 		err := models.Conn.Raw(sqlString).Scan(&customer).Error
-		log.Println(customer)
-
 		if err != nil {
 			log.Println(err)
 			return "查询失败:" + err.Error(), err

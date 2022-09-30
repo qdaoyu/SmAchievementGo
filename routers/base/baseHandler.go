@@ -484,6 +484,7 @@ func GetShopHandler(c *gin.Context) {
 
 // 获取尚美会员信息列表(管理员_id1和测试角色_id2默认可以返回所有数据)
 func GetSmCustomerListHandler(c *gin.Context) {
+	var cust customer.Customertb
 	var smMap = make(map[string]interface{})
 	currentPage, err := strconv.Atoi(c.Query("currentPage"))
 	if err != nil {
@@ -495,6 +496,14 @@ func GetSmCustomerListHandler(c *gin.Context) {
 		log.Println(err)
 		return
 	}
+
+	shop := c.Query("shop")
+	consultteach := c.Query("consultteach")
+	name := c.Query("name")
+	cust.Shop = shop
+	cust.Consultteach = consultteach
+	cust.Name = name
+	log.Println(cust)
 	userID, _ := strconv.Atoi(c.Request.Header.Get("userID"))
 	//类型断言
 	userName, _ := c.Get("username")
@@ -509,7 +518,7 @@ func GetSmCustomerListHandler(c *gin.Context) {
 		})
 		return
 	}
-	smMap, err = customer.GetSmCustomerList(userID, userNameAssert, currentPage, size)
+	smMap, err = customer.GetSmCustomerList(userID, userNameAssert, currentPage, size, cust)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"code":    5002,
