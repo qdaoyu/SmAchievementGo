@@ -42,4 +42,7 @@ func LoadBase(e *gin.Engine) {
 	//下载会员信息
 	e.GET("/customer/export", ExportSmCustomerHandler)
 
+	//获取尚美订单信息
+	e.GET("orderRecord/list", GetSmOrderListHandler)
+
 }
