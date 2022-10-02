@@ -25,6 +25,11 @@ type SmConsumetype struct {
 	Consumetype string
 }
 
+type SmCustomerid struct {
+	Id         int
+	Customerid string
+}
+
 // 获取尚美门店信息表
 func GetSmShop() (map[string]interface{}, error) {
 	var smshop []SmShop
@@ -127,6 +132,33 @@ func GetSmConsumetype() (map[string]interface{}, error) {
 		return resMp, err
 	} else {
 		resMp["data"] = smconsumetype
+		resMp["message"] = "查询成功"
+		return resMp, nil
+	}
+
+}
+
+// 获取尚美会员id信息表
+func GetSmCustomerid() (map[string]interface{}, error) {
+	var smCustomerid []SmCustomerid
+	//存储信息
+	resMp := make(map[string]interface{})
+	//limit offset
+	sqlString := `select t_customer.id,t_customer.customerid from t_customer`
+	err := models.Conn.Raw(sqlString).Scan(&smCustomerid).Error
+	if err != nil {
+		log.Println(err)
+		resMp["message"] = "查询失败" + err.Error()
+		return resMp, err
+	}
+	// models.Conn.Raw(sqlString, userID).Scan(&user)
+	// db.Raw(sqlString, userID).Create(&user)
+	if len(smCustomerid) == 0 {
+		log.Println("无消费类型数据")
+		resMp["message"] = "查无数据"
+		return resMp, err
+	} else {
+		resMp["data"] = smCustomerid
 		resMp["message"] = "查询成功"
 		return resMp, nil
 	}

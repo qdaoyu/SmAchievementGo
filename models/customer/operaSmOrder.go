@@ -49,17 +49,14 @@ func GetSmOrderList(uid int, username string, currentPage int, size int, ordertb
 		// sqlString := `select t_customer.*,
 		// t_orderlist.treatnum,t_orderlist.operanum ,t_orderlist.unoperanum
 		// from t_customer left join t_orderlist on t_customer.customerid = t_orderlist.customerid limit ? offset  ? `
-		sqlString := `select t_customer.customerid ,t_customer.name ,t_customer.gender ,
-		t_customer.phone ,t_customer.shop,t_customer.consultteach , date_format(t_customer.visittime,"%Y-%m-%d") as visittime,
-		t_orderlist.treatnum ,t_orderlist.operanum ,t_orderlist.unoperanum  
-		from t_customer left join t_orderlist on t_customer.customerid = t_orderlist.customerid` + `  ` + conditionParam + ` limit ? offset  ? `
+		sqlString := `select t_orderlist.* from t_orderlist ` + `  ` + conditionParam + ` limit ? offset  ? `
 
-		sqlStringTotal := `select count(*) from t_customer` + `  ` + conditionParam
+		sqlStringTotal := `select count(*) from t_orderlist` + `  ` + conditionParam
 
 		models.Conn.Raw(sqlStringTotal).Count(&total)
 		// err := models.Conn.Raw(sqlString).Count(&total).Limit(size).Offset(offsetVal).Scan(&customer).Error
-		err := models.Conn.Raw(sqlString, size, offsetVal).Scan(&customer).Error
-		log.Println(customer)
+		err := models.Conn.Raw(sqlString, size, offsetVal).Scan(&order).Error
+		log.Println("order:", order)
 		// err := models.Conn.Table("t_syachieve").Count(&total).Limit(size).Offset(offsetVal).Find(&syAchieve).Error
 		log.Println("条数：", total)
 		if err != nil {
@@ -69,27 +66,24 @@ func GetSmOrderList(uid int, username string, currentPage int, size int, ordertb
 		}
 		// models.Conn.Raw(sqlString, userID).Scan(&user)
 		// db.Raw(sqlString, userID).Create(&user)
-		if len(customer) == 0 {
+		if len(order) == 0 {
 			log.Println("数据库无数据")
 			smMap["message"] = "数据库无数据"
 			return smMap, err
 		} else {
-			smMap["data"] = customer
+			smMap["data"] = order
 			smMap["message"] = "查询成功"
 			smMap["total"] = total
 			return smMap, nil
 		}
 	} else {
 		//limit offset
-		sqlString := `select t_customer.customerid ,t_customer.name ,t_customer.gender ,
-		t_customer.phone ,t_customer.shop,t_customer.consultteach , date_format(t_customer.visittime,"%Y-%m-%d") as visittime ,
-		t_orderlist.treatnum,t_orderlist.operanum ,t_orderlist.unoperanum 
-		from t_customer left join t_orderlist on t_customer.customerid = t_orderlist.customerid ` + `  ` + conditionParam + `and t_customer.consultteach = ? limit ? offset  ? `
+		sqlString := `select t_orderlist.* from t_orderlist  ` + `  ` + conditionParam + `and t_orderlist.consultteach = ? limit ? offset  ? `
 
-		sqlStringTotal := `select count(*) from t_customer ` + `  ` + conditionParam + ` and t_customer.consultteach = ? `
+		sqlStringTotal := `select count(*) from t_customer ` + `  ` + conditionParam + ` and t_orderlist.consultteach = ? `
 
 		models.Conn.Raw(sqlStringTotal, username).Count(&total)
-		err := models.Conn.Raw(sqlString, username, size, offsetVal).Scan(&customer).Error
+		err := models.Conn.Raw(sqlString, username, size, offsetVal).Scan(&order).Error
 		log.Println("条数：", total)
 		if err != nil {
 			log.Println(err)
@@ -98,12 +92,12 @@ func GetSmOrderList(uid int, username string, currentPage int, size int, ordertb
 		}
 		// models.Conn.Raw(sqlString, userID).Scan(&user)
 		// db.Raw(sqlString, userID).Create(&user)
-		if len(customer) == 0 {
+		if len(order) == 0 {
 			log.Println("无此人数据")
 			smMap["message"] = "查无数据"
 			return smMap, err
 		} else {
-			smMap["data"] = customer
+			smMap["data"] = order
 			smMap["message"] = "查询成功"
 			smMap["total"] = total
 			return smMap, nil

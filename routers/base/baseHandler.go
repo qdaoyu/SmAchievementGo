@@ -416,10 +416,32 @@ func GetItemHandler(c *gin.Context) {
 }
 
 // GetConsumetypeHandler
-// 获取消费类型信息
+// 获取消费类型信息 GetSmCustomeridListHandler
 func GetConsumetypeHandler(c *gin.Context) {
 	// var smMap = make(map[string]interface{})
 	resMap, err := basic.GetSmConsumetype()
+	if err != nil {
+		c.JSON(200, gin.H{
+			"code":    5002,
+			"message": resMap["message"],
+			"data":    nil,
+		})
+		return
+	} else {
+		c.JSON(http.StatusOK, gin.H{
+			"code":    200,
+			"message": resMap["message"],
+			"data":    resMap["data"],
+			"total":   resMap["total"],
+		})
+		return
+	}
+}
+
+// 获取会员id信息
+func GetSmCustomeridListHandler(c *gin.Context) {
+	// var smMap = make(map[string]interface{})
+	resMap, err := basic.GetSmCustomerid()
 	if err != nil {
 		c.JSON(200, gin.H{
 			"code":    5002,

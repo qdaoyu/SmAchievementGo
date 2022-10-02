@@ -21,6 +21,7 @@ func LoadBase(e *gin.Engine) {
 	// e.POST("/achieve/sy/info/add", AddSyAchieveInfoHandler)
 	// AddSyAchieveInfoHandler
 	// e.GET("/achieve/sy/info/get", GetSyAchieveInfoHandler)
+
 	//获取尚美会员列表
 	e.GET("/customer/list", GetSmCustomerListHandler)
 	// e.POST("/auth", AuthHandler)
@@ -29,10 +30,12 @@ func LoadBase(e *gin.Engine) {
 	//获取咨询师信息
 	e.GET("/basic/consultteach", GetConsultteachHandler)
 	//获取项目信息
-
 	e.GET("/basic/item", GetItemHandler)
 	//获取消费类型信息
 	e.GET("/basic/consumetype", GetConsumetypeHandler)
+	//获取尚美会员id
+	e.GET("/basic/customerid", GetSmCustomeridListHandler)
+
 	//添加会员信息
 	e.POST("/customer/add", AddSmCustomerHandler)
 	//删除会员信息
