@@ -10,7 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 导出尚美订单信息-待改
+// 导出尚美订单信息
 func ExportSmOrderHandler(c *gin.Context) {
 	log.Println("进入")
 	userID, _ := strconv.Atoi(c.Request.Header.Get("userID"))
@@ -30,7 +30,7 @@ func ExportSmOrderHandler(c *gin.Context) {
 	}
 
 	//返回文件地址
-	filePath, err := customer.ExportSmCustomerList(userID, userNameAssert)
+	filePath, err := customer.ExportSmOrderList(userID, userNameAssert)
 	log.Println(filePath)
 	if err != nil {
 		c.JSON(200, gin.H{
@@ -42,7 +42,7 @@ func ExportSmOrderHandler(c *gin.Context) {
 	} else {
 
 		c.Header("Content-Type", "application/octet-stream")
-		c.Header("Content-Disposition", "attachment; filename="+userNameAssert+"customerInfo.xlsx") // 用来指定下载下来的文件名
+		c.Header("Content-Disposition", "attachment; filename="+userNameAssert+"OrderInfo.xlsx") // 用来指定下载下来的文件名
 		c.Header("Content-Transfer-Encoding", "binary")
 
 		// fileData, err := ioutil.ReadFile(filePath)
@@ -60,41 +60,41 @@ func ExportSmOrderHandler(c *gin.Context) {
 	}
 }
 
-// 更新尚美订单信息-待改
+// 更新尚美订单信息
 func UpdateSmOrderHandler(c *gin.Context) {
-	var customertb customer.Customertb
+	var ordertb customer.Ordertb
 	// log.Println("log:", c.Query("customerid"))
-	err := c.ShouldBind(&customertb)
-	log.Println("addCustomer:", customertb)
+	err := c.ShouldBind(&ordertb)
+	log.Println("addCustomer:", ordertb)
 	log.Println(err)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    2001,
-			"message": "会员信息更新失败,请联系系统管理员(江昌杰)" + err.Error(),
+			"message": "订单信息更新失败,请联系系统管理员(江昌杰)" + err.Error(),
 		})
 		return
 	}
 
-	err = customer.UpdateSmCustomer(customertb)
+	err = customer.UpdateSmOrder(ordertb)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    2002,
-			"message": "会员信息更新失败,请联系系统管理员(江昌杰)" + err.Error(),
+			"message": "订单信息更新失败,请联系系统管理员(江昌杰)" + err.Error(),
 		})
 		return
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,
-			"message": "会员信息更新成功",
+			"message": "订单信息更新成功",
 		})
 	}
 }
 
 // 删除尚美订单信息-待改
 func DeleteSmOrderHandler(c *gin.Context) {
-	phone := c.Param("id")
-	log.Println("log:", phone)
-	if len(phone) == 0 {
+	orderID := c.Param("id")
+	log.Println("log:", orderID)
+	if len(orderID) == 0 {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    2003,
 			"message": "删除失败，无删除参数",
@@ -102,7 +102,7 @@ func DeleteSmOrderHandler(c *gin.Context) {
 		return
 	}
 
-	err := customer.DeleteSmCustomer(phone)
+	err := customer.DeleteSmOrder(orderID)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    2002,
@@ -117,29 +117,29 @@ func DeleteSmOrderHandler(c *gin.Context) {
 	}
 }
 
-// 添加尚美订单信息-待改
+// 添加尚美订单信息
 func AddSmOrderHandler(c *gin.Context) {
 	var errMsg string
-	var customertb customer.Customertb
-	log.Println("log:", c.Query("customerid"))
-	err := c.ShouldBind(&customertb)
-	log.Println("addCustomer:", customertb)
-	log.Println(err)
+	var ordertb customer.Ordertb
+	err := c.ShouldBind(&ordertb)
+	log.Println("addOrder:", ordertb)
 	if err != nil {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    2001,
-			"message": "会员信息新增失败,请联系系统管理员(江昌杰)" + err.Error(),
+			"message": "订单信息新增失败,请联系系统管理员(江昌杰)" + err.Error(),
 		})
 		return
 	}
 
-	err = customer.AddSmCustomer(customertb)
+	err = customer.AddSmOrder(ordertb)
 	if err != nil {
-		ok := strings.Contains(err.Error(), "PRIMARY")
+		log.Println("err.Error():-----------", err.Error())
+		ok := strings.Contains(err.Error(), "Duplicate")
 		if ok {
-			errMsg = "添加失败,此会员已注册！"
+			errMsg = "添加失败,该顾客当天已登记见诊记录！"
 		} else {
-			errMsg = "新增会员失败:" + err.Error()
+			log.Println("err.Error():-----------", err.Error())
+			errMsg = "添加订单失败:" + err.Error()
 		}
 		c.JSON(http.StatusOK, gin.H{
 			"code":    2002,
@@ -149,13 +149,15 @@ func AddSmOrderHandler(c *gin.Context) {
 	} else {
 		c.JSON(http.StatusOK, gin.H{
 			"code":    200,
-			"message": "新增会员成功",
+			"message": "添加订单记录成功",
 		})
 	}
 }
 
-// 获取尚美订单信息列表(管理员_id1和测试角色_id2默认可以返回所有数据)-待改
+// 获取尚美订单信息列表(管理员_id1和测试角色_id2默认可以返回所有数据)
 func GetSmOrderListHandler(c *gin.Context) {
+
+	// log.Println("当前日期", time.Now().Format("2006-01-02"))
 	var order customer.Ordertb
 	var smMap = make(map[string]interface{})
 	currentPage, err := strconv.Atoi(c.Query("currentPage"))
@@ -168,7 +170,7 @@ func GetSmOrderListHandler(c *gin.Context) {
 		log.Println(err)
 		return
 	}
-
+	name := c.Query("name")
 	item := c.Query("item")
 	consumetype := c.Query("consumetype")
 	consultteach := c.Query("consultteach")
@@ -177,6 +179,7 @@ func GetSmOrderListHandler(c *gin.Context) {
 		log.Println("剩余未操作次数转化int失败")
 		unoperanum = -1
 	}
+	// order.Name = name
 	order.Item = item
 	order.Consumetype = consumetype
 	order.Consultteach = consultteach
@@ -196,7 +199,7 @@ func GetSmOrderListHandler(c *gin.Context) {
 		})
 		return
 	}
-	smMap, err = customer.GetSmOrderList(userID, userNameAssert, currentPage, size, order)
+	smMap, err = customer.GetSmOrderList(userID, userNameAssert, currentPage, size, order, name)
 	if err != nil {
 		c.JSON(200, gin.H{
 			"code":    5002,

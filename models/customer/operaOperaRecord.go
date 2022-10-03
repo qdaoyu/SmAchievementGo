@@ -12,8 +12,8 @@ import (
 	"github.com/360EntSecGroup-Skylar/excelize"
 )
 
-// 获取尚美会员信息表
-func GetSmOrderList(uid int, username string, currentPage int, size int, ordertb Ordertb, name string) (map[string]interface{}, error) {
+// 获取操作记录表
+func GetOperaList(uid int, username string, currentPage int, size int, ordertb Ordertb, name string) (map[string]interface{}, error) {
 	var order []Ordertb
 	var user menuInfo.User
 	var total int64
@@ -114,8 +114,8 @@ func GetSmOrderList(uid int, username string, currentPage int, size int, ordertb
 
 }
 
-// 新增订单信息
-func AddSmOrder(order Ordertb) error {
+// 新增操作记录
+func AddOpera(order Ordertb) error {
 	//判断顾客的新老是否选择正确,在见诊日期之前就已经存在了
 	var countRows int64
 	// sqlString := `select t_orderlist.* from t_orderlist ` + `  ` + conditionParam + ` limit ? offset  ? `
@@ -142,8 +142,8 @@ func AddSmOrder(order Ordertb) error {
 
 }
 
-// 更新会员信息
-func UpdateSmOrder(order Ordertb) error {
+// 更新操作记录
+func UpdateOpera(order Ordertb) error {
 	//判断顾客的新老是否选择正确,在见诊日期之前就已经存在了
 	var countRows int64
 	sqlStringTotal := `select count(*) from t_orderlist where customerid = "` + order.Customerid + `"  and visittime <  "` + order.Visittime + `"`
@@ -181,8 +181,8 @@ func UpdateSmOrder(order Ordertb) error {
 
 }
 
-// 删除会员信息
-func DeleteSmOrder(orderId string) error {
+// 删除操作记录
+func DeleteOpera(orderId string) error {
 	sqlString := `DELETE from t_orderlist where orderid = ?`
 	err := models.Conn.Exec(sqlString, orderId).Error
 	// err := models.Conn.Table("t_customer").Where("phone= ? ", phone).Delete(&Customertb{}).Error
@@ -195,9 +195,9 @@ func DeleteSmOrder(orderId string) error {
 
 }
 
-// 导出会员信息
-// 获取尚美会员信息表,返回文件地址
-func ExportSmOrderList(uid int, username string) (string, error) {
+// 导出操作记录
+// 获取操作记录信息表,返回文件地址
+func ExportOperaList(uid int, username string) (string, error) {
 	var order []Ordertb
 	var user menuInfo.User
 	//存储信息

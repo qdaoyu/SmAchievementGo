@@ -46,6 +46,14 @@ func LoadBase(e *gin.Engine) {
 	e.GET("/customer/export", ExportSmCustomerHandler)
 
 	//获取尚美订单信息
-	e.GET("orderRecord/list", GetSmOrderListHandler)
+	e.GET("/orderRecord/list", GetSmOrderListHandler)
+	//添加尚美订单信息
+	e.POST("/orderRecord/add", AddSmOrderHandler)
+	//删除尚美订单信息
+	e.DELETE("/orderRecord/delete/:id", DeleteSmOrderHandler)
+	//更新尚美订单信息
+	e.PUT("/orderRecord/update", UpdateSmOrderHandler)
+	//下载尚美订单信息
+	e.GET("/orderRecord/export", ExportSmOrderHandler)
 
 }

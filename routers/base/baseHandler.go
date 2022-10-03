@@ -374,7 +374,7 @@ func AddSmCustomerHandler(c *gin.Context) {
 
 	err = customer.AddSmCustomer(customertb)
 	if err != nil {
-		ok := strings.Contains(err.Error(), "PRIMARY")
+		ok := strings.Contains(err.Error(), "Duplicate")
 		if ok {
 			errMsg = "添加失败,此会员已注册！"
 		} else {

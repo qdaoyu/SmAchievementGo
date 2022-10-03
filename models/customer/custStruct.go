@@ -13,8 +13,9 @@ type Customertb struct {
 }
 
 type Ordertb struct {
-	Orderid      string  `form:"Orderid" json:"Customerid" `
-	Visittime    string  `form:"Visittime" json:"Visittime" `
+	// Name         string  `form:"Name" json:"Name" `
+	Orderid      string  `form:"Orderid" json:"Orderid" `
+	Visittime    string  `form:"visittime" json:"Visittime" binding:"required"`
 	Customerid   string  `form:"Customerid" json:"Customerid" `
 	Consumetype  string  `form:"Consumetype" json:"Consumetype" `
 	Item         string  `form:"Item" json:"Item" `

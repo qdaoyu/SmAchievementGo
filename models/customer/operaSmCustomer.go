@@ -110,6 +110,8 @@ func ExportSmCustomerList(uid int, username string) (string, error) {
 			f.SetCellValue("Sheet1", "E1", "门店")
 			f.SetCellValue("Sheet1", "F1", "咨询师")
 			f.SetCellValue("Sheet1", "G1", "见诊日期")
+			// f.SetCellValue("Sheet1", "H1", "见诊日期")
+			// f.SetCellValue("Sheet1", "I1", "见诊日期")
 			//数据库取值
 			sqlStringTotal := `select * from t_customer`
 			err := models.Conn.Raw(sqlStringTotal).Scan(&customer).Error
@@ -156,7 +158,7 @@ func ExportSmCustomerList(uid int, username string) (string, error) {
 		if len(customer) == 0 {
 			return "无数据,无法下载", errors.New("无数据,无法下载")
 		} else {
-			var filePath string = "/exportFile/" + username + strconv.FormatInt(time.Now().Unix(), 10) + ".xlsx"
+			var filePath string = "./assets/exportFile/" + username + strconv.FormatInt(time.Now().Unix(), 10) + ".xlsx"
 			//数据库数据整理到表格中
 			f := excelize.NewFile()
 			// 设置单元格的值
@@ -168,12 +170,12 @@ func ExportSmCustomerList(uid int, username string) (string, error) {
 			f.SetCellValue("Sheet1", "F1", "咨询师")
 			f.SetCellValue("Sheet1", "G1", "见诊日期")
 			//数据库取值
-			sqlStringTotal := `select * from t_customer`
-			err := models.Conn.Raw(sqlStringTotal).Scan(&customer).Error
-			if err != nil {
-				log.Println(err)
-				return "", err
-			}
+			// sqlStringTotal := `select * from t_customer`
+			// err := models.Conn.Raw(sqlStringTotal).Scan(&customer).Error
+			// if err != nil {
+			// 	log.Println(err)
+			// 	return "", err
+			// }
 			var i int = 2
 			for key, value := range customer {
 				log.Println(key, "---", value)
